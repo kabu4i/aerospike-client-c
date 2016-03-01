@@ -40,7 +40,7 @@ extern "C" {
 #define AS_CONFIG_LUA_USER_PATH "/opt/aerospike/client/usr/udf/lua"
 #endif
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__FreeBSD__)
 /**
  * Default path to the system UDF files.
  */

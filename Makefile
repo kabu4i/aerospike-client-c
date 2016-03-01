@@ -60,6 +60,9 @@ ifeq ($(OS),Darwin)
     CC_FLAGS += -I/usr/local/opt/openssl/include
   endif
   LUA_PLATFORM = macosx
+else ($(OS),freebsd)
+  CC_FLAGS += -finline-functions
+  LUA_PLATFORM = freebsd
 else
   CC_FLAGS += -finline-functions -rdynamic
   LUA_PLATFORM = linux
@@ -99,12 +102,13 @@ else
     # Find where the Lua development package is installed in the build environment.
     INC_PATH += $(or \
       $(wildcard /usr/include/lua-5.1), \
+      $(wildcard /usr/local/include/lua51), \
       $(wildcard /usr/include/lua5.1))
     INCLUDE_LUA_5_1 = /usr/include/lua5.1
     ifneq ($(wildcard $(INCLUDE_LUA_5_1)),)
       LUA_SUFFIX=5.1
     endif
-    ifeq ($(OS),Darwin)
+    ifneq ($(OS),linux)
       ifneq ($(wildcard /usr/local/include),)
         INC_PATH += /usr/local/include
       endif
@@ -184,12 +188,13 @@ DEPS += $(COMMON)/$(TARGET_OBJ)/common/citrusleaf/*.o
 DEPS += $(MOD_LUA)/$(TARGET_OBJ)/*.o
 
 ifeq ($(USE_LUAMOD),1)
-  LUA_DYNAMIC_OBJ = $(filter-out $(LUAMOD)/src/lua.o $(LUAMOD)/src/luac.o, $(shell ls $(LUAMOD)/src/*.o))
+  LUA_DYNAMIC_OBJ = $(filter-out $(LUAMOD)/CMakeFiles/liblua.dir/src/lua.o $(LUAMOD)/CMakeFiles/liblua.dir/src/luac.o, $(shell ls $(LUAMOD)/CMakeFiles/liblua.dir/src/*.o))
+
   LUA_STATIC_OBJ  = $(LUA_DYNAMIC_OBJ)
 else
   ifeq ($(USE_LUAJIT),1)
-    LUA_DYNAMIC_OBJ = $(shell ls $(LUAJIT)/src/*_dyn.o)
-    LUA_STATIC_OBJ  = $(filter-out $(LUA_DYNAMIC_OBJ) $(LUAJIT)/src/luajit.o, $(shell ls $(LUAJIT)/src/*.o))
+    LUA_DYNAMIC_OBJ = $(shell ls $(LUAJIT)/CMakeFiles/liblua.dir/src/*_dyn.o)
+    LUA_STATIC_OBJ  = $(filter-out $(LUA_DYNAMIC_OBJ) $(LUAJIT)/CMakeFiles/liblua.dir/src/luajit.o, $(shell ls $(LUAJIT)/CMakeFiles/liblua.dir/src/*.o))
   endif
 endif
 
@@ -231,7 +236,6 @@ COMMON-HEADERS += $(COMMON)/$(SOURCE_INCL)/citrusleaf/cf_atomic.h
 COMMON-HEADERS += $(COMMON)/$(SOURCE_INCL)/citrusleaf/cf_b64.h
 COMMON-HEADERS += $(COMMON)/$(SOURCE_INCL)/citrusleaf/cf_clock.h
 COMMON-HEADERS += $(COMMON)/$(SOURCE_INCL)/citrusleaf/cf_queue.h
-COMMON-HEADERS += $(COMMON)/$(SOURCE_INCL)/citrusleaf/cf_types.h
 COMMON-HEADERS += $(shell find $(COMMON)/$(SOURCE_INCL)/aerospike/ck -type f)
 
 EXCLUDE-HEADERS = 
@@ -291,7 +295,7 @@ package-clean:
 
 .PHONY: tags etags
 tags etags:
-	etags `find benchmarks demos examples modules src -name "*.[ch]" | egrep -v '(target/Linux|m4)'` `find /usr/include -name "*.h"`
+	etags `find benchmarks demos examples modules src -name "*.[ch]" | egrep -v '(target/Linux|target/FreeBSD|m4)'` `find /usr/include -name "*.h"`
 
 ###############################################################################
 ##  BUILD TARGETS                                                            ##

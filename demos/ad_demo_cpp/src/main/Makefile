@@ -34,6 +34,9 @@ endif
 ifeq ($(OS),Darwin)
 CC = clang++
 LDFLAGS += -lssl -lcrypto -lpthread -L/usr/local/lib -lm -lz
+else ($(OS),freebsd)
+CC = clang++
+LDFLAGS =  -lssl -lcrypto -lpthread -L/usr/local/lib -lm -lz
 else
 CC = g++
 LDFLAGS += -lssl -lcrypto -lpthread -lrt -lm -lz
@@ -41,6 +44,7 @@ endif
 
 LUA_CPATH += $(or \
     $(wildcard /usr/include/lua-5.1), \
+    $(wildcard /usr/local/include/lua51), \
     $(wildcard /usr/include/lua5.1))
 
 ifeq ($(OS),Darwin)

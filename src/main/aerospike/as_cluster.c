@@ -24,6 +24,7 @@
 #include <aerospike/as_socket.h>
 #include <aerospike/as_string.h>
 #include <aerospike/as_vector.h>
+#include <aerospike/as_thread_pool.h>
 
 #include <citrusleaf/alloc.h>
 #include <citrusleaf/cf_byte_order.h>

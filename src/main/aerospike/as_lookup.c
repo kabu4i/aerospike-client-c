@@ -16,6 +16,7 @@
  */
 #include <aerospike/as_lookup.h>
 #include <aerospike/as_log_macros.h>
+#include <aerospike/as_socket.h>
 #include <citrusleaf/cf_byte_order.h>
 #include <netdb.h>
 

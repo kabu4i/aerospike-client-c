@@ -21,7 +21,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -33,7 +33,7 @@
 #define as_close(fd) (close(fd))
 #endif
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) ||defined(__FreeBSD__)
 #define SOL_TCP IPPROTO_TCP
 #define MSG_NOSIGNAL 0
 #endif
@@ -89,7 +89,7 @@ as_socket_create_and_connect_nb(as_error* err, struct sockaddr_in *sa, int* fd);
 bool
 as_socket_validate(int fd, bool pipe);
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
 
 /**
  *	@private

@@ -105,11 +105,17 @@ as_shm_get_max_size()
 	}
 	fclose(f);
 	return shm_max;
+#ifdef __FreeBSD__
+       size_t shm_max;
+       size_t len = sizeof(size_t);
+       sysctlbyname("kern.ipc.shmmax", &shm_max, &len, NULL, 0);
+       return shm_max;
 #else
 	size_t shm_max;
 	size_t len = sizeof(size_t);
 	sysctlbyname("kern.sysv.shmmax", &shm_max, &len, NULL, 0);
 	return shm_max;
+#endif
 #endif
 }
 

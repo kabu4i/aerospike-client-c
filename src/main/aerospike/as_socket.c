@@ -26,7 +26,8 @@
 
 bool as_socket_stop_on_interrupt = false;
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
+#include <stdio.h>
 #include <fcntl.h>
 #include <netinet/tcp.h>
 #include <sys/socket.h>
@@ -34,12 +35,15 @@ bool as_socket_stop_on_interrupt = false;
 #include <sys/time.h>
 #include <errno.h>
 #define IS_CONNECTING() (errno == EINPROGRESS)
-#endif // __linux__ __APPLE__
+#endif // __linux__ __APPLE__ __FreeBSD__
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__FreeBSD__)
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#endif //  __linux__ __APPLE__ __FreeBSD__
+
+#if defined(__linux__)
 #include <sys/epoll.h>
 #endif // __linux__
 
@@ -60,7 +64,7 @@ bool as_socket_stop_on_interrupt = false;
 #define IS_CONNECTING() (errno == EWOULDBLOCK)
 #endif // CF_WINDOWS
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
 
 #define STACK_LIMIT (16 * 1024)
 
@@ -156,7 +160,7 @@ as_socket_create_nb()
 
 	int f = 1;
 	setsockopt(fd, SOL_TCP, TCP_NODELAY, &f, sizeof(f));
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__FreeBSD__)
 	setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &f, sizeof(f));
 #endif
 	return fd;

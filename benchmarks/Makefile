@@ -17,6 +17,8 @@ CFLAGS += -D_FILE_OFFSET_BITS=64 -D_REENTRANT -D_GNU_SOURCE
 
 ifeq ($(OS),Darwin)
   CFLAGS += -D_DARWIN_UNLIMITED_SELECT 
+else ($(OS),freebsd)
+  CFLAGS += Wl,--export-dynamic
 else
   CFLAGS += -rdynamic
 endif
@@ -43,7 +45,7 @@ endif
 
 LDFLAGS += -lssl -lcrypto -lpthread
 
-ifneq ($(OS),Darwin)
+ifeq ($(OS),linux)
   LDFLAGS += -lrt -ldl
 endif
 
@@ -101,6 +103,8 @@ LDFLAGS += -lm -lz
 
 ifeq ($(OS),Darwin)
   CC = cc
+else ($(OS),freebsd)
+  CC = clang
 else
   CC = gcc
 endif
